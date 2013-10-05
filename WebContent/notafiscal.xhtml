@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:caelum="http://java.sun.com/jsf/composite/caelum"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/_template.xhtml">
+	<ui:define name="titulo">Uberdist - Cadastro de Notas Fiscais</ui:define>
+	<ui:define name="corpo">
+		<h:form id="formNotaFiscal">
+			<p:tabView>
+				<p:tab title="Formulário">
+					<fieldset>
+						<legend>Dados da Nota</legend>
+						<p:outputLabel value="CNPJ" for="cnpj" />
+						<p:inputMask id="cnpj" value="#{notaFiscalBean.notaFiscal.cnpj}"
+							mask="99.999.999/9999-99" />
+
+						<p:outputLabel value="Data:" for="data" />
+						<p:calendar id="data" pattern="dd/MM/yyyy"
+							value="#{notaFiscalBean.notaFiscal.data.time}" readonly="true" />
+					</fieldset>
+					<fieldset>
+						<legend>Dados do Item</legend>
+						<h:outputLabel value="Produto:" />
+						<h:selectOneMenu value="#{notaFiscalBean.item.produto}">
+							<f:selectItems value="#{produtoBean.lista}" var="produto"
+								itemValue="#{produto}" itemLabel="#{produto.nome}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel value="Quantidade:" />
+						<h:inputText value="#{notaFiscalBean.item.quantidade}" />
+
+						<h:commandButton action="#{notaFiscalBean.guardaItem}"
+							value="Guardar Item">
+							<f:ajax execute="@form" render=":formNotaFiscal" />
+						</h:commandButton>
+					</fieldset>
+				</p:tab>
+				<p:tab title="Lista">
+					<h2>Itens da Nota Fiscal</h2>
+					<p:dataTable value="#{notaFiscalBean.notaFiscal.itens}" var="item"
+						paginator="true" rows="5" styleClass="dados"
+						rowClasses="impar, par">
+						<p:column headerText="Produto">
+							<p:outputLabel value="#{item.produto.nome}" />
+						</p:column>
+						<p:column headerText="Valor Unitário">
+							<p:outputLabel value="#{item.valorUnitario}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									locale="pt_BR" />
+							</p:outputLabel>
+						</p:column>
+						<p:column headerText="Quantidade">
+							<p:outputLabel value="#{item.quantidade}" />
+						</p:column>
+						<p:column headerText="Total">
+							<p:outputLabel value="#{item.total}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									locale="pt_BR" />
+							</p:outputLabel>
+						</p:column>
+					</p:dataTable>
+					<h:commandButton value="Gravar" action="#{notaFiscalBean.gravar}">
+						<f:ajax execute="@form" render=":formNotaFiscal" />
+					</h:commandButton>
+				</p:tab>
+			</p:tabView>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

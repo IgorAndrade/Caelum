@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="/_template.xhtml">
+	<ui:define name="titulo">Uberdist - Cadastro de Usuario</ui:define>
+	<ui:define name="corpo">
+		<h2>
+			<h:outputText value="Novo Usuário" rendered="#{empty produtoBean.produto.id}"/>
+			<h:outputText value="Editar Usuário" rendered="#{not empty produtoBean.produto.id}"/>
+		</h2>
+		<h:form id="formCadastro">
+			<fieldset>
+				<legend>Dados do Usuário</legend>
+				<h:outputLabel value="Nome:" for="login"/>
+				<h:inputText id="login" value="#{usuarioBean.usuario.login}"/>
+				
+				<h:outputLabel value="Senha:" for="senha"/>
+				<h:inputSecret id="senha" value="#{usuarioBean.usuario.senha}"/>
+	
+				<h:panelGrid id="painelBotoes" columns="2">
+					<h:commandButton value="Gravar" action="#{usuarioBean.grava}">
+						<!-- f:ajax execute="@form" render=":formAcoes @form"/ -->
+					</h:commandButton>
+					<h:commandButton value="Cancelar" action="#{usuarioBean.cancela}" 
+									 rendered="#{not empty usuarioBean.usuario.id}"/>
+			 	</h:panelGrid>
+			 </fieldset>
+		</h:form>
+		<h2>Listagem de Produtos</h2>
+		<h:form id="formAcoes">
+			<h:dataTable value="#{usuarioBean.lista}" var="usuario" styleClass="dados" rowClasses="par,impar">
+				<h:column>
+					<f:facet name="header">Login</f:facet>
+					#{usuario.login}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Ações</f:facet>
+					<h:commandLink value="Remover" action="#{usuarioBean.remove(usuario)}">
+						<f:ajax render="@form"/>
+					</h:commandLink>
+					&nbsp;
+					<h:commandLink value="Alterar">
+						<f:ajax render=":formCadastro" />
+						<f:setPropertyActionListener value="#{usuario}" target="#{usuarioBean.usuario}"/>
+					</h:commandLink>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

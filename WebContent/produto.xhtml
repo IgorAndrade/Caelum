@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+					  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:caelum="http://java.sun.com/jsf/composite/caelum"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:s="http://jboss.org/seam/faces">
+
+<ui:composition template="/_template.xhtml">
+	<ui:define name="titulo">Uberdist - Cadastro de Produto</ui:define>
+	<ui:define name="corpo">
+		<f:metadata>
+			<f:viewParam name="produto.id" value="#{produtoBean.produtoId}"></f:viewParam>
+			<s:viewAction action="#{produtoBean.carregaProduto}" />
+		</f:metadata>
+		<h:form id="formCadastro">
+			<s:validateForm validatorId="NomeDesc" />
+			<h2>
+				<h:outputText value="Novo Produto"
+					rendered="#{empty produtoBean.produto.id}" />
+				<h:outputText value="Editar Produto"
+					rendered="#{not empty produtoBean.produto.id}" />
+			</h2>
+
+			<p:messages autoUpdate="true" styleClass="erros" />
+			<!-- 		<h:messages styleClass="erros" /> -->
+			<fieldset>
+				<legend>Dados do Produto</legend>
+				<h:outputLabel value="Nome:" for="nome" />
+				<h:inputText id="nome" value="#{produtoBean.produto.nome}"
+					validator="val" />
+
+				<h:outputLabel value="Descrição:" for="descricao" />
+				<h:inputTextarea id="descricao"
+					value="#{produtoBean.produto.descricao}" rows="3" />
+
+				<h:outputLabel value="Preço:" for="preco" />
+				<h:inputText id="preco" value="#{produtoBean.produto.preco}"
+					required="true" requiredMessage="Preco obrig"
+					validatorMessage="O valor mim é 1">
+					<f:validateDoubleRange minimum="1.0" />
+				</h:inputText>
+
+
+				<h:panelGrid columns="2" styleClass="campos">
+
+					<h:commandButton value="Gravar" action="#{produtoBean.grava}" />
+
+					<p:commandButton value="Cancelar" action="produto" update="@all"
+						rendered="#{not empty produtoBean.produto.id}" immediate="true">
+						<!-- 						<f:ajax execute="@this" render="@all"></f:ajax> -->
+					</p:commandButton>
+				</h:panelGrid>
+			</fieldset>
+			<!-- 		</h:form> -->
+			<h2>Listagem de Produtos</h2>
+			<!-- 		<h:form id="formAcoes"> -->
+			<h:dataTable value="#{produtoBean.lista}" var="produto"
+				styleClass="dados" rowClasses="par,impar">
+				<h:column>
+					<f:facet name="header">Nome</f:facet>
+					#{produto.nome}
+				</h:column>
+				<h:column>
+					#{produto.descricao}
+					<f:facet name="header">Descrição</f:facet>
+					<f:facet name="footer">
+						<h:outputText value="Preço Total" style="font-weight:bold" />
+					</f:facet>
+				</h:column>
+				<h:column>
+					#{produto.preco}
+					<f:facet name="header">Preço</f:facet>
+					<f:facet name="footer">
+						<h:outputText value="#{produtoBean.precoTotal}"
+							style="font-weight:bold" />
+					</f:facet>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Ações</f:facet>
+					<h:commandLink value="Remover"
+						action="#{produtoBean.remove(produto)}">
+						<f:ajax render="@form" />
+					</h:commandLink>
+					&nbsp;
+					<h:commandLink value="Alterar">
+						<f:ajax render="@form" />
+						<f:setPropertyActionListener value="#{produto}"
+							target="#{produtoBean.produto}" />
+					</h:commandLink>
+					<h:outputLink value="produto.xhtml">
+						<h:outputText value="Editar via get" />
+						<f:param name="produto.id" value="#{produto.id}" />
+					</h:outputLink>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
